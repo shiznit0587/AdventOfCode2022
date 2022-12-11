@@ -6,6 +6,7 @@ import org.shiznit.aoc22.day3.Day3;
 import org.shiznit.aoc22.day4.Day4;
 import org.shiznit.aoc22.day5.Day5;
 import org.shiznit.aoc22.day6.Day6;
+import org.shiznit.aoc22.day7.Day7;
 
 import java.io.IOException;
 
@@ -19,5 +20,6 @@ public class AdventOfCode2022 {
         new Day4();
         new Day5();
         new Day6();
+        new Day7();
     }
 }
