@@ -1,5 +1,7 @@
 package org.shiznit.aoc22.day8;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,108 +23,50 @@ public class Day8 {
                     .toArray();
         }
 
-        int visibleCount = 0;
+        int visibleCount = 0, bestScore = 0;
         for (int i = 0; i < trees.length; ++i) {
             for (int j = 0; j < trees[i].length; ++j) {
-                if (isTreeVisible(i, j)) {
+                Pair<Boolean, Integer> up = exploreFromTree(i, j, -1, 0);
+                Pair<Boolean, Integer> down = exploreFromTree(i, j, 1, 0);
+                Pair<Boolean, Integer> left = exploreFromTree(i, j, 0, -1);
+                Pair<Boolean, Integer> right = exploreFromTree(i, j, 0, 1);
+
+                boolean visible = up.getLeft() || down.getLeft() || left.getLeft() || right.getLeft();
+                if (visible) {
                     ++visibleCount;
                 }
-            }
-        }
 
-        System.out.println("Num Visible Trees = " + visibleCount);
-
-        System.out.println("Running Day 8 - Part 2");
-
-        int bestScore = 0;
-        // Exclude edges, their scores are all 0.
-        for (int i = 1; i < trees.length - 1; ++i) {
-            for (int j = 1; j < trees[i].length - 1; ++j) {
-                int score = calculateScenicScore(i, j);
+                int score = up.getRight() * down.getRight() * left.getRight() * right.getRight();
                 if (score > bestScore) {
                     bestScore = score;
                 }
             }
         }
 
+        System.out.println("Num Visible Trees = " + visibleCount);
+        System.out.println("Running Day 8 - Part 2");
         System.out.println("Best Scenic Score = " + bestScore);
     }
 
-    private boolean isTreeVisible(int x, int y) {
-        boolean visibleUp = true, visibleDown = true, visibleLeft = true, visibleRight = true;
+    private Pair<Boolean, Integer> exploreFromTree(int x, int y, int dx, int dy) {
         int tree = trees[x][y];
+        x += dx;
+        y += dy;
 
-        // Check Up
-        for (int i = 0; i < x; ++i) {
-            if (trees[i][y] >= tree) {
-                visibleUp = false;
+        boolean visible = true;
+        int seen = 0;
+        while (0 <= x && x < trees.length && 0 <= y && y < trees[x].length) {
+            ++seen;
+
+            if (trees[x][y] >= tree) {
+                visible = false;
                 break;
             }
+
+            x += dx;
+            y += dy;
         }
 
-        // Check Down
-        for (int i = x + 1; i < trees.length; ++i) {
-            if (trees[i][y] >= tree) {
-                visibleDown = false;
-                break;
-            }
-        }
-
-        // Check Left
-        for (int i = 0; i < y; ++i) {
-            if (trees[x][i] >= tree) {
-                visibleLeft = false;
-                break;
-            }
-        }
-
-        // Check Right
-        for (int i = y + 1; i < trees[x].length; ++i) {
-            if (trees[x][i] >= tree) {
-                visibleRight = false;
-                break;
-            }
-        }
-
-        return visibleUp || visibleDown || visibleLeft || visibleRight;
-    }
-
-    private int calculateScenicScore(int x, int y) {
-        int up = 0, down = 0, left = 0, right = 0;
-        int tree = trees[x][y];
-
-        // Count Up
-        for (int i = x - 1; i >= 0; --i) {
-            ++up;
-            if (trees[i][y] >= tree) {
-                break;
-            }
-        }
-
-        // Count Down
-        for (int i = x + 1; i < trees.length; ++i) {
-            ++down;
-            if (trees[i][y] >= tree) {
-                break;
-            }
-        }
-
-        // Count Left
-        for (int i = y - 1; i >= 0; --i) {
-            ++left;
-            if (trees[x][i] >= tree) {
-                break;
-            }
-        }
-
-        // Count Right
-        for (int i = y + 1; i < trees[x].length; ++i) {
-            ++right;
-            if (trees[x][i] >= tree) {
-                break;
-            }
-        }
-
-        return up * down * left * right;
+        return Pair.of(visible, seen);
     }
 }
