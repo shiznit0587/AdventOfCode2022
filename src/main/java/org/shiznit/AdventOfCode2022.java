@@ -1,6 +1,7 @@
 package org.shiznit;
 
 import org.shiznit.aoc22.day1.Day1;
+import org.shiznit.aoc22.day10.Day10;
 import org.shiznit.aoc22.day2.Day2;
 import org.shiznit.aoc22.day3.Day3;
 import org.shiznit.aoc22.day4.Day4;
@@ -25,5 +26,6 @@ public class AdventOfCode2022 {
         new Day7();
         new Day8();
         new Day9();
+        new Day10();
     }
 }
