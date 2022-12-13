@@ -1,5 +1,7 @@
 package org.shiznit.aoc22.day10;
 
+import com.google.common.primitives.Booleans;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,23 +19,34 @@ public class Day10 {
                 .map(Instruction::parse)
                 .collect(Collectors.toList());
 
-        int x = 1, cycle = 1, cursor = 0, strength = 0;
+        int x = 1, cycle = 1, cursor = -1, strength = 0;
+        boolean[][] crt = new boolean[6][40];
 
-        while (cycle <= 220) {
-            Instruction instr = instructions.get(cursor);
+        while (cycle <= 240) {
+            Instruction instr = instructions.get(++cursor);
 
-            for (int i = 0; i < instr.cycles; ++i) {
-                if ((cycle + i) % 40 == 20) {
-                    strength += (cycle + i) * x;
+            int end = cycle + instr.cycles;
+            for (; cycle < end; ++cycle) {
+                if (cycle % 40 == 20) {
+                    strength += cycle * x;
                 }
+
+                int row = (cycle - 1) / 40;
+                int pixel = (cycle - 1) % 40;
+                crt[row][pixel] = Math.abs(pixel - x) <= 1;
             }
 
-            cycle += instr.cycles;
             x += instr.dx;
-            cursor = (cursor + 1) % instructions.size();
         }
 
         System.out.println("Sum Signal Strengths = " + strength);
+
+        System.out.println("Running Day 10 - Part 2");
+
+        System.out.println("CRT = ");
+        for (boolean[] booleans : crt) {
+            System.out.println(Booleans.asList(booleans).stream().map(b -> b ? "#" : " ").collect(Collectors.joining()));
+        }
     }
 
     static class Instruction {
