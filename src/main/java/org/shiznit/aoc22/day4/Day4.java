@@ -1,16 +1,15 @@
 package org.shiznit.aoc22.day4;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Day4 {
-
-    static final Pattern pattern = Pattern.compile("(\\d+)\\-(\\d+),(\\d+)\\-(\\d+)");
 
     public Day4() throws IOException {
 
@@ -39,12 +38,9 @@ public class Day4 {
 
 
     int[] parseLine(String line) {
-        Matcher match = pattern.matcher(line);
-        return new int[] {
-                Integer.parseInt(match.group(1)),
-                Integer.parseInt(match.group(2)),
-                Integer.parseInt(match.group(3)),
-                Integer.parseInt(match.group(4))
-        };
+        return Splitter.on(CharMatcher.anyOf(",-"))
+                .splitToStream(line)
+                .mapToInt(Integer::parseInt)
+                .toArray();
     }
 }

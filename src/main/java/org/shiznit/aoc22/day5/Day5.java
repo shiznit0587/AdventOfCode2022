@@ -1,11 +1,11 @@
 package org.shiznit.aoc22.day5;
 
+import com.google.common.base.Splitter;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Day5 {
@@ -19,8 +19,6 @@ public class Day5 {
         List<Deque<Character>> stacks1 = new ArrayList<>();
         List<Deque<Character>> stacks2 = new ArrayList<>();
         List<Instruction> instructions = new ArrayList<>();
-
-        Pattern pattern = Pattern.compile("move (\\d+) from (\\d+) to (\\d+)");
 
         for (String line : lines) {
             if (line.contains("[")) {
@@ -39,11 +37,11 @@ public class Day5 {
                 }
             }
             else if (line.contains("move")) {
-                Matcher match = pattern.matcher(line);
+                List<String> parts = Splitter.on(" ").splitToList(line);
                 Instruction instruction = new Instruction();
-                instruction.move = Integer.parseInt(match.group(1));
-                instruction.from = Integer.parseInt(match.group(2)) - 1;
-                instruction.to = Integer.parseInt(match.group(3)) - 1;
+                instruction.move = Integer.parseInt(parts.get(1));
+                instruction.from = Integer.parseInt(parts.get(3)) - 1;
+                instruction.to = Integer.parseInt(parts.get(5)) - 1;
                 instructions.add(instruction);
             }
         }
