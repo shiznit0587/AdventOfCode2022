@@ -21,7 +21,36 @@ public class Day11 {
                 .map(this::parseMonkey)
                 .collect(Collectors.toMap(m -> m.id, Function.identity()));
 
-        for (int round = 0; round < 20; ++round) {
+        // Copy monkeys for use in part 2
+        Map<Integer, Monkey> monkeys2 = monkeys.values().stream()
+                .map(Monkey::copy)
+                .collect(Collectors.toMap(m -> m.id, Function.identity()));
+
+        simulate(monkeys, 20, item -> item / 3);
+
+        long monkeyBusiness = calcMonkeyBusiness(monkeys.values());
+
+        System.out.println("Monkey Business = " + monkeyBusiness);
+
+        System.out.println("Running Day 11 - Part 2");
+
+        long commonMultiple = monkeys2.values().stream().map(m -> m.testValue).reduce(1, (a, b) -> a * b);
+        simulate(monkeys2, 10000, item -> item % commonMultiple);
+
+        monkeyBusiness = calcMonkeyBusiness(monkeys2.values());
+
+        System.out.println("Monkey Business = " + monkeyBusiness);
+    }
+
+    private long calcMonkeyBusiness(Collection<Monkey> monkeys) {
+        return monkeys.stream().map(m -> m.inspections)
+                .sorted(Comparator.reverseOrder())
+                .limit(2)
+                .reduce((a, b) -> a * b).get();
+    }
+
+    private void simulate(Map<Integer, Monkey> monkeys, int rounds, Function<Long, Long> divisor) {
+        for (int round = 0; round < rounds; ++round) {
             for (int turn = 0; turn < monkeys.size(); ++turn) {
                 // process the monkey.
                 Monkey monkey = monkeys.get(turn);
@@ -33,7 +62,7 @@ public class Day11 {
                     // Inspect an item
                     item = monkey.operation.apply(item);
                     // feel relief
-                    item /= 3;
+                    item = divisor.apply(item);
                     // test
                     Monkey target = monkeys.get(monkey.test.apply(item));
                     // throw item
@@ -43,15 +72,6 @@ public class Day11 {
                 monkey.items = new ArrayList<>();
             }
         }
-
-        int monkeyBusiness = monkeys.values().stream().map(m -> m.inspections)
-                .sorted(Comparator.reverseOrder())
-                .limit(2)
-                .reduce((a,b) -> a * b).get();
-
-        System.out.println("Monkey Business = " + monkeyBusiness);
-
-        System.out.println("Running Day 11 - Part 2");
     }
 
     private Monkey parseMonkey(List<String> lines) {
@@ -99,12 +119,13 @@ public class Day11 {
                 .get(5));
 
         // Test
-        int test = Integer.parseInt(Splitter.on(' ')
+        monkey.testValue = Integer.parseInt(Splitter.on(' ')
                 .trimResults()
                 .omitEmptyStrings()
                 .splitToList(lines.get(3))
                 .get(3));
-        monkey.test = worry -> (worry % test) == 0 ? testTrueTarget : testFalseTarget;
+
+        monkey.test = worry -> (worry % monkey.testValue) == 0 ? testTrueTarget : testFalseTarget;
 
         return monkey;
     }
@@ -114,7 +135,18 @@ public class Day11 {
         List<Long> items;
         Function<Long, Long> operation;
         Function<Long, Integer> test;
+        int testValue;
 
-        int inspections = 0;
+        long inspections = 0;
+
+        public Monkey copy() {
+            Monkey monkey = new Monkey();
+            monkey.id = id;
+            monkey.items = Lists.newArrayList(items);
+            monkey.operation = operation;
+            monkey.test = test;
+            monkey.testValue = testValue;
+            return monkey;
+        }
     }
 }
