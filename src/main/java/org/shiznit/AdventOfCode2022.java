@@ -4,6 +4,7 @@ public class AdventOfCode2022 {
     public static void main(String[] args) {
         System.out.println("\n🎅🎅🎅🎅🎅 ADVENT OF CODE 2022 🎅🎅🎅🎅🎅\n");
 
+        long total = System.currentTimeMillis();
         for (int i = 1; i <= 25; ++i) {
             try {
                 Class<?> day = Class.forName("org.shiznit.aoc22.day" + i + ".Day" + i);
@@ -14,5 +15,6 @@ public class AdventOfCode2022 {
                 // probably doesn't exist yet.
             }
         }
+        System.out.printf("Total time = %d", System.currentTimeMillis() - total);
     }
 }
