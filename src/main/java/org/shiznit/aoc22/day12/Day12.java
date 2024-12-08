@@ -42,7 +42,7 @@ public class Day12 {
         }
 
         Deque<Pair<Integer, Integer>> queue = new ArrayDeque<>();
-        new PriorityQueue<>()
+        new PriorityQueue<>();
 
         // Find start and end.
         // S = -14, E = -28
